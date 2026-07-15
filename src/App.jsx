@@ -86,6 +86,7 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedQuickViewProduct, setSelectedQuickViewProduct] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [toastMessage, setToastMessage] = useState(null);
 
   // Persist states
   useEffect(() => {
@@ -95,6 +96,51 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('luxe_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
+
+  // Toast timer logic
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => {
+        setToastMessage(null);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage]);
+
+  // Global click interceptor for placeholder links and buttons
+  useEffect(() => {
+    const handleGlobalClick = (e) => {
+      const target = e.target.closest('a, button');
+      if (!target) return;
+
+      const href = target.getAttribute('href');
+      const isButton = target.tagName === 'BUTTON';
+
+      // Define valid functional layout scroll points
+      const validSections = ['#home', '#shop', '#new-arrivals', '#categories', '#testimonials', '#instagram'];
+
+      const isPlaceholderLink = href && (
+        href === '#' ||
+        (href.startsWith('#') && !validSections.includes(href)) ||
+        href.includes('instagram.com') ||
+        href.includes('facebook.com') ||
+        href.includes('tiktok.com')
+      );
+
+      const isPlaceholderButton = isButton && (
+        target.classList.contains('account-icon') ||
+        target.textContent.toLowerCase().includes('checkout')
+      );
+
+      if (isPlaceholderLink || isPlaceholderButton) {
+        e.preventDefault();
+        setToastMessage('Feature Coming Soon');
+      }
+    };
+
+    document.addEventListener('click', handleGlobalClick, true);
+    return () => document.removeEventListener('click', handleGlobalClick, true);
+  }, []);
 
   // Cart actions
   const handleAddToCart = (product, size = 'M', quantity = 1) => {
@@ -216,6 +262,18 @@ export default function App() {
           onClose={() => setSelectedQuickViewProduct(null)}
           onAddToCart={handleAddToCart}
         />
+      )}
+
+      {/* Luxury Toast Notification */}
+      {toastMessage && (
+        <div className="toast-notification">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '10px', color: '#B8956C' }}>
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <span>{toastMessage}</span>
+        </div>
       )}
     </>
   );
