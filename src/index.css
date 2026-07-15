@@ -1309,7 +1309,7 @@ button {
   transform: translateX(-50%);
   background-color: rgba(26, 25, 24, 0.96);
   color: var(--color-white);
-  padding: 14px 28px;
+  padding: 12px 24px;
   border-radius: 40px;
   box-shadow: var(--shadow-medium);
   z-index: 1000;
@@ -1321,6 +1321,8 @@ button {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   animation: slideDownFadeIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  white-space: nowrap !important;
+  width: max-content !important;
 }
 
 @keyframes slideDownFadeIn {
@@ -1456,6 +1458,9 @@ button {
   }
   .instagram-grid {
     grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .category-card .overlay-icon {
+    display: none !important;
   }
   .footer-bottom {
     flex-direction: column;
